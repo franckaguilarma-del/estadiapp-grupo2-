@@ -291,6 +291,16 @@
         }
         return values.sort();
       }
+      function filterCategories(key) {
+        const standard = {
+          reason: ['Estudio individual', 'Trabajo en grupo', 'Préstamo o consulta de libros', 'Computadores o internet', 'Otro'],
+          occupancy: ['Baja', 'Media', 'Alta', 'Llena'],
+          found: ['Sí', 'Parcialmente', 'No'],
+          hourBand: Array.from({ length: 24 }, (_, hour) => `${String(hour).padStart(2, '0')}:00–${String(hour).padStart(2, '0')}:59`)
+        }[key] || [];
+        const observed = uniqueCategories(records, key);
+        return standard.concat(observed.filter(value => !standard.includes(value)));
+      }
       function initializeAnalysis() {
         analysisVariable.innerHTML = ANALYSIS_VARIABLES.map(variable => `<option value="${variable.key}">${escapeHTML(variable.label)}</option>`).join('');
         filterVariable.innerHTML = '<option value="">Sin filtro</option>' + ANALYSIS_VARIABLES.filter(variable => variable.type === 'qualitative').map(variable => `<option value="${variable.key}">${escapeHTML(variable.label)}</option>`).join('');
@@ -302,13 +312,13 @@
       function updateFilterValues() {
         const key = filterVariable.value;
         const previousValue = filterValue.value;
-        const categories = key ? uniqueCategories(records, key) : [];
+        const categories = key ? filterCategories(key) : [];
         filterValue.disabled = false;
         filterValue.innerHTML = !key
           ? '<option value="">Selecciona una variable cualitativa primero</option>'
           : categories.length
             ? '<option value="">Todas las categorías</option>' + categories.map(value => `<option value="${escapeHTML(value)}">${escapeHTML(value)}</option>`).join('')
-            : '<option value="">No hay categorías registradas</option>';
+            : '<option value="">Selecciona una variable cualitativa primero</option>';
         if (categories.includes(previousValue)) filterValue.value = previousValue;
       }
       function filteredRecords() {
@@ -481,11 +491,6 @@
         const insight = mostCommon.length > 1 ? `Las categorías más frecuentes son ${leaders}, con ${maxCount} observaciones cada una (${leaderPct} % por categoría).` : `La categoría más frecuente es ${leaders}, con ${maxCount} ${maxCount === 1 ? 'observación' : 'observaciones'} (${leaderPct} %).`;
         const svg = `<svg class="chart-svg" viewBox="0 0 ${width} ${bottom + 24}" role="img" aria-label="Gráfico de barras horizontales de ${escapeHTML(variable.label)}"><title>Frecuencias por categoría</title><desc>Barras horizontales con frecuencia absoluta y porcentaje de cada categoría.</desc><defs><linearGradient id="qualFill" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#238f83"/><stop offset="100%" stop-color="#75cdbb"/></linearGradient></defs>${grid}${bars}<line class="axisline" x1="${left}" y1="${bottom - 20}" x2="${width - right}" y2="${bottom - 20}"/><text class="axis-title" x="${left + plotWidth / 2}" y="${bottom + 17}" text-anchor="middle" font-size="12">Frecuencia (fi)</text></svg>`;
         return `<div class="visuals-grid"><article class="chart-card"><h4>Frecuencia por categoría</h4><p>Longitud de la barra = frecuencia; junto a cada barra aparecen fi y porcentaje.</p><div class="chart-scroll">${svg}</div></article></div><div class="insight-card"><span class="insight-icon" aria-hidden="true">✦</span><div><h4>Lectura automática</h4><p>${insight}</p></div></div>`;
-      }
-          const interval = index === classes - 1 ? `[${numberFormat.format(lower)}, ${numberFormat.format(upper)}]` : `[${numberFormat.format(lower)}, ${numberFormat.format(upper)})`;
-          rows.push(`<tr><td>${index + 1}<span class="formula"> · ${interval}</span></td><td>${numberFormat.format(lower)}</td><td>${numberFormat.format(upper)}</td><td>${numberFormat.format(midpoint)}</td><td>${fi}</td><td>${cumulative}</td><td>${percentFormat.format(hi)} %</td><td>${percentFormat.format(Hi)} %</td></tr>`);
-        }
-        return `<div class="analysis-block"><h4>Tabla de frecuencias para datos agrupados</h4>${tableMarkup(['Clase', 'Li', 'Ls', 'Marca de clase xi', 'fi', 'Fi', 'hi (%)', 'Hi (%)'], rows)}<p class="analysis-note">Sturges: k = redondeo de 1 + 3,322 · log₁₀(n) = ${classes}. Amplitud A = rango ÷ k, redondeada hacia arriba a ${decimals} decimales: ${numberFormat.format(amplitude)}. Los intervalos son [Li, Ls), salvo la última clase que incluye ambos límites.</p></div>`;
       }
       function quantitativeAnalysis(data, variable) {
         const values = data.map(record => Number(record[variable.key])).filter(Number.isFinite).sort((a, b) => a - b);
