@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1F3A5F">
+  <meta name="description" content="Registro de observaciones sobre ocupación y tiempos de espera en la Biblioteca de UNIPAZ.">
+  <title>EstadíApp – Grupo 2.1 | Biblioteca UNIPAZ</title>
+  <style>
+    :root{--navy:#1F3A5F;--teal:#2A9D8F;--amber:#E9A23B;--ink:#203047;--muted:#68778b;--paper:#fff;--bg:#f2f6fa;--line:#dce5ee;--danger:#b42318;--shadow:0 14px 38px rgba(31,58,95,.09);--radius:18px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}button,input,select{font:inherit}button{cursor:pointer}.page{width:min(1160px,100% - 32px);margin:auto;padding:28px 0 48px}
+    .hero{position:relative;overflow:hidden;padding:30px clamp(22px,5vw,48px);border-radius:24px;background:linear-gradient(120deg,#173354 0%,#1F3A5F 58%,#245b73 100%);color:white;box-shadow:var(--shadow)}.hero:after{content:"";position:absolute;width:260px;height:260px;border:1px solid rgba(255,255,255,.13);border-radius:50%;right:-70px;top:-100px;box-shadow:0 0 0 28px rgba(255,255,255,.035),0 0 0 58px rgba(255,255,255,.025)}.eyebrow{margin:0 0 10px;color:#b9eee2;font-size:.76rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.hero h1{position:relative;z-index:1;margin:0;font-size:clamp(1.8rem,4vw,3rem);line-height:1.08;letter-spacing:-.035em}.hero .subtitle{position:relative;z-index:1;max-width:690px;margin:14px 0 0;color:#e4edf5;font-size:clamp(1rem,2vw,1.16rem)}.hero-meta{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:7px 12px;background:rgba(255,255,255,.09);font-size:.84rem;color:#f6fbff}.chip-dot{width:8px;height:8px;border-radius:50%;background:var(--amber)}
+    .summary{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:20px 0 14px}.summary-note{margin:0;color:var(--muted);font-size:.92rem}.count-card{display:flex;align-items:center;gap:12px;padding:10px 15px;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:0 5px 16px rgba(31,58,95,.04)}.count-number{display:grid;place-items:center;min-width:42px;height:42px;padding:0 8px;border-radius:12px;background:#e6f5f2;color:#176e63;font-size:1.2rem;font-weight:850}.count-label{font-size:.82rem;color:var(--muted);line-height:1.2}.count-label strong{display:block;color:var(--navy);font-size:.92rem}
+    .tabs{display:flex;gap:5px;padding:6px;overflow:auto;border:1px solid var(--line);border-radius:15px;background:#e8eef4}.tab{flex:1;min-width:max-content;border:0;border-radius:10px;padding:11px 16px;background:transparent;color:#53647a;font-weight:750;transition:.18s}.tab:hover{background:#fff;color:var(--navy)}.tab[aria-selected="true"]{background:var(--navy);color:#fff;box-shadow:0 4px 12px rgba(31,58,95,.2)}
+    .panel{margin-top:16px;padding:clamp(18px,4vw,32px);border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);box-shadow:var(--shadow)}.panel[hidden]{display:none}.section-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:22px}.section-icon{display:grid;place-items:center;flex:0 0 44px;height:44px;border-radius:13px;background:#e6f5f2;color:#177568}.section-icon svg{width:22px;height:22px}.section-head h2{margin:0;color:var(--navy);font-size:1.35rem;letter-spacing:-.02em}.section-head p{margin:4px 0 0;color:var(--muted);font-size:.93rem}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 20px}.field{min-width:0}.field.full{grid-column:1/-1}.field label{display:flex;align-items:center;gap:7px;margin-bottom:7px;color:#263d58;font-weight:750;font-size:.9rem}.required{color:#c45525}.field-hint{margin:6px 0 0;color:#748399;font-size:.78rem}.control{width:100%;min-height:47px;padding:11px 13px;border:1px solid #cbd7e3;border-radius:11px;background:#fff;color:#203047;outline:none;transition:border-color .15s,box-shadow .15s}.control:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,157,143,.15)}.control:invalid:not(:focus):not(:placeholder-shown){border-color:#e0a09a}.select-wrap{position:relative}.select-wrap:after{content:"";position:absolute;right:15px;top:18px;width:8px;height:8px;border-right:2px solid #63758a;border-bottom:2px solid #63758a;transform:rotate(45deg);pointer-events:none}.select-wrap select{appearance:none;padding-right:40px}.actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:24px}.btn{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:46px;padding:11px 18px;border:0;border-radius:11px;font-weight:800;transition:transform .15s,filter .15s,box-shadow .15s}.btn:hover{filter:brightness(1.04);transform:translateY(-1px)}.btn:active{transform:translateY(0)}.btn-primary{background:var(--teal);color:#fff;box-shadow:0 5px 12px rgba(42,157,143,.2)}.btn-secondary{border:1px solid var(--line);background:white;color:#43566e}.btn-danger{min-height:35px;padding:7px 10px;border:1px solid #f2c9c5;background:#fff7f6;color:var(--danger);font-size:.8rem}.btn svg{width:18px;height:18px}.privacy-note{display:flex;gap:9px;align-items:flex-start;margin:20px 0 0;padding:12px 14px;border-radius:11px;background:#f3f7fa;color:#62738a;font-size:.82rem}.privacy-note svg{flex:0 0 17px;width:17px;height:17px;margin-top:1px;color:var(--teal)}
+    .records-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:28px 0 12px}.records-head h3{margin:0;color:var(--navy);font-size:1.05rem}.records-sub{margin:3px 0 0;color:var(--muted);font-size:.82rem}.table-shell{overflow:auto;border:1px solid var(--line);border-radius:13px}table{width:100%;min-width:940px;border-collapse:collapse;background:#fff;font-size:.83rem}thead{background:#edf3f7}th,td{padding:12px 12px;text-align:left;vertical-align:middle;border-bottom:1px solid #e8edf2}th{color:#38506b;font-size:.76rem;letter-spacing:.025em;white-space:nowrap}tbody tr:last-child td{border-bottom:0}tbody tr:hover{background:#f8fbfd}.row-number{color:#6e7d91;font-variant-numeric:tabular-nums}.empty{padding:28px 16px;text-align:center;color:#738198}.empty strong{display:block;margin-bottom:3px;color:#40556e}.empty-cell{text-align:center!important}.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#edf5f3;color:#226e65;font-size:.75rem;font-weight:700;white-space:nowrap}.status{position:fixed;z-index:5;right:18px;bottom:18px;max-width:min(420px,calc(100% - 36px));padding:13px 17px;border-radius:12px;background:#183754;color:white;box-shadow:0 12px 28px rgba(21,47,74,.24);font-size:.91rem;font-weight:650;opacity:0;transform:translateY(12px);pointer-events:none;transition:.22s}.status.show{opacity:1;transform:translateY(0)}.status.error{background:#9e3028}.construction{display:flex;align-items:center;gap:14px;min-height:145px;padding:24px;border:1px dashed #b8c8d7;border-radius:14px;background:#f8fafc;color:#63758a}.construction-mark{display:grid;place-items:center;flex:0 0 44px;height:44px;border-radius:13px;background:#fff1d9;color:#986416;font-size:1.25rem}.construction strong{display:block;margin-bottom:3px;color:var(--navy);font-size:1.05rem}.footer{padding:18px 4px 0;text-align:center;color:#7e8b9b;font-size:.78rem}.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:680px){.page{width:min(100% - 20px,1160px);padding-top:10px}.hero{padding:25px 21px;border-radius:19px}.hero:after{right:-150px}.summary{align-items:flex-start}.summary-note{max-width:52%;font-size:.83rem}.count-card{padding:8px 10px;gap:8px}.count-number{min-width:38px;height:38px}.tabs{gap:3px;padding:4px}.tab{padding:10px 13px;font-size:.84rem}.panel{padding:19px 15px}.form-grid{grid-template-columns:1fr;gap:14px}.field.full{grid-column:auto}.actions .btn{width:100%}.records-head{align-items:flex-start;flex-direction:column}.btn-secondary{width:100%}.section-head{margin-bottom:18px}}
+    .analysis-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:22px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#f7fafc}.analysis-controls .field label{margin-bottom:6px}.analysis-summary{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin:0 0 14px}.analysis-summary h3{margin:0;color:var(--navy);font-size:1.08rem}.analysis-summary p{margin:0;color:var(--muted);font-size:.85rem}.analysis-block{margin-top:22px}.analysis-block h4{margin:0 0 10px;color:#314b68;font-size:.96rem}.analysis-table{min-width:600px}.analysis-table th,.analysis-table td{font-variant-numeric:tabular-nums}.analysis-table td:first-child{font-variant-numeric:normal}.formula{color:#7c8999;font-size:.76rem}.analysis-note{margin:10px 0 0;padding:11px 13px;border-left:3px solid var(--amber);border-radius:0 9px 9px 0;background:#fffaf1;color:#6c5a3b;font-size:.82rem}.analysis-empty{padding:22px;border:1px dashed #c8d4df;border-radius:12px;color:var(--muted);background:#fafcfd}.empty-note-label{display:block;margin:16px 0 7px;color:#314b68;font-weight:750;font-size:.9rem}.empty-note{width:100%;min-height:110px;resize:vertical;padding:12px 13px;border:1px solid #cbd7e3;border-radius:11px;background:#fff;color:var(--ink);font:inherit;outline:none}.empty-note:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,157,143,.15)}.empty-note-help{margin:6px 0 0;color:#748399;font-size:.78rem}.analysis-count{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:999px;background:#e6f5f2;color:#176e63;font-size:.8rem;font-weight:750}
+    .visuals-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:22px}.chart-card{min-width:0;padding:17px;border:1px solid #dce6ee;border-radius:15px;background:linear-gradient(180deg,#fff 0%,#fbfdff 100%);box-shadow:0 8px 22px rgba(31,58,95,.055)}.chart-card h4{margin:0;color:var(--navy);font-size:1rem}.chart-card p{margin:4px 0 12px;color:var(--muted);font-size:.82rem}.chart-scroll{overflow-x:auto}.chart-svg{display:block;width:100%;min-width:600px;height:auto}.chart-svg text{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;fill:#53677f}.chart-svg .axis-title{fill:#314b68;font-weight:750}.chart-svg .gridline{stroke:#e4ebf1;stroke-width:1}.chart-svg .axisline{stroke:#8798aa;stroke-width:1.3}.chart-legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px;color:#52657b;font-size:.8rem}.legend-item{display:inline-flex;align-items:center;gap:7px}.legend-dot{width:11px;height:11px;border-radius:3px;background:#2A9D8F}.legend-line{width:18px;height:3px;border-radius:2px;background:#E9A23B}.legend-mean{width:10px;height:10px;transform:rotate(45deg);background:#E9A23B}.five-number{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:12px}.five-number span{display:block;padding:9px 10px;border-radius:10px;background:#f1f6f9;color:#718095;font-size:.72rem}.five-number strong{display:block;margin-top:3px;color:var(--navy);font-size:.9rem;font-variant-numeric:tabular-nums}.insight-card{display:flex;gap:13px;margin-top:18px;padding:16px;border:1px solid #d2e8e3;border-radius:14px;background:linear-gradient(115deg,#f0faf7,#fbfefd)}.insight-icon{display:grid;place-items:center;flex:0 0 38px;height:38px;border-radius:11px;background:#d8f0e9;color:#18786c;font-weight:900}.insight-card h4{margin:0 0 5px;color:#176e63;font-size:.95rem}.insight-card p{margin:0;color:#40566f;font-size:.88rem;line-height:1.6}
+    @media(max-width:680px){.analysis-controls{grid-template-columns:1fr;padding:13px}.analysis-table{min-width:560px}.chart-card{padding:13px}.five-number{grid-template-columns:repeat(3,minmax(0,1fr))}.insight-card{padding:13px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">Proyecto de Aula · Estadística</p>
+      <h1>EstadíApp <span style="color:#aee5d9">Grupo 2.1</span></h1>
+      <p class="subtitle">Ocupación y tiempos de espera en la Biblioteca de UNIPAZ</p>
+      <div class="hero-meta"><span class="chip"><span class="chip-dot"></span>Registro de observaciones</span><span class="chip">Biblioteca · UNIPAZ</span></div>
+    </header>
+
+    <section class="summary" aria-label="Resumen de registros">
+      <p class="summary-note">Registra cada visita observada. Los datos se guardan en este dispositivo.</p>
+      <div class="count-card"><span class="count-number" id="recordCount">0</span><span class="count-label"><strong id="countWord">registros</strong>guardados</span></div>
+    </section>
+
+    <nav class="tabs" role="tablist" aria-label="Secciones de la aplicación">
+      <button class="tab" id="tab-register" type="button" role="tab" aria-selected="true" aria-controls="panel-register">Registrar</button>
+      <button class="tab" id="tab-analysis" type="button" role="tab" aria-selected="false" aria-controls="panel-analysis" tabindex="-1">Análisis</button>
+      <button class="tab" id="tab-probability" type="button" role="tab" aria-selected="false" aria-controls="panel-probability" tabindex="-1">Probabilidad</button>
+      <button class="tab" id="tab-report" type="button" role="tab" aria-selected="false" aria-controls="panel-report" tabindex="-1">Informe</button>
+    </nav>
+
+    <section class="panel" id="panel-register" role="tabpanel" aria-labelledby="tab-register">
+      <div class="section-head"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 4.5h8M9 3h6v3H9zM6 5.5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-12a2 2 0 0 0-2-2h-1"/><path d="m8 13 2.3 2.3L16.5 9"/></svg></span><div><h2>Registrar observación</h2><p>Completa la fecha, la hora y las características de la visita a la biblioteca.</p></div></div>
+      <form id="recordForm" novalidate>
+        <div class="form-grid">
+          <div class="field"><label for="date">Fecha <span class="required" aria-hidden="true">*</span></label><input class="control" id="date" name="date" type="date" required></div>
+          <div class="field"><label for="time">Hora de llegada <span class="required" aria-hidden="true">*</span></label><input class="control" id="time" name="time" type="time" required><p class="field-hint">Se usará para calcular la franja horaria.</p></div>
+          <div class="field"><label for="stay">Tiempo de permanencia (min) <span class="required" aria-hidden="true">*</span></label><input class="control" id="stay" name="stay" type="number" inputmode="decimal" min="0" step="any" placeholder="Ej.: 45,5" required><p class="field-hint">En minutos; admite decimales.</p></div>
+          <div class="field"><label for="wait">Tiempo para conseguir puesto o atención (min) <span class="required" aria-hidden="true">*</span></label><input class="control" id="wait" name="wait" type="number" inputmode="decimal" min="0" step="any" placeholder="Ej.: 8" required><p class="field-hint">En minutos; admite decimales.</p></div>
+          <div class="field"><label for="reason">Motivo de la visita <span class="required" aria-hidden="true">*</span></label><div class="select-wrap"><select class="control" id="reason" name="reason" required><option value="">Selecciona una opción</option><option>Estudio individual</option><option>Trabajo en grupo</option><option>Préstamo o consulta de libros</option><option>Computadores o internet</option><option>Otro</option></select></div></div>
+          <div class="field"><label for="occupancy">Ocupación de la sala al llegar <span class="required" aria-hidden="true">*</span></label><div class="select-wrap"><select class="control" id="occupancy" name="occupancy" required><option value="">Selecciona una opción</option><option>Baja</option><option>Media</option><option>Alta</option><option>Llena</option></select></div></div>
+          <div class="field full"><label for="found">¿Encontró lo que buscaba? <span class="required" aria-hidden="true">*</span></label><div class="select-wrap"><select class="control" id="found" name="found" required><option value="">Selecciona una opción</option><option>Sí</option><option>Parcialmente</option><option>No</option></select></div></div>
+        </div>
+        <div class="actions"><button class="btn btn-primary" type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Guardar registro</button></div>
+      </form>
+      <p class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3m-4 4v3"/></svg><span>Los registros se almacenan localmente en este navegador. No incluyas nombres ni datos que identifiquen a las personas observadas.</span></p>
+
+      <div class="records-head"><div><h3>Registros guardados</h3><p class="records-sub">Más recientes primero · Franja horaria calculada desde la hora de llegada</p></div><button class="btn btn-secondary" id="clearAll" type="button">Borrar todos los registros</button></div>
+      <div class="actions data-actions" aria-label="Exportar, importar y respaldar datos">
+        <button class="btn btn-secondary" id="exportCsv" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v3h14v-3"/></svg>Exportar CSV (Excel)</button>
+        <button class="btn btn-secondary" id="importCsvButton" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3m0 0L8 7m4-4 4 4M5 17v3h14v-3"/></svg>Importar CSV y unir</button>
+        <button class="btn btn-secondary" id="downloadBackup" type="button">Descargar respaldo (.json)</button>
+        <button class="btn btn-secondary" id="restoreBackupButton" type="button">Restaurar respaldo</button>
+        <input class="sr-only" id="csvFile" type="file" accept=".csv,text/csv" tabindex="-1" aria-hidden="true">
+        <input class="sr-only" id="jsonFile" type="file" accept=".json,application/json" tabindex="-1" aria-hidden="true">
+      </div>
+      <div class="table-shell"><table aria-label="Tabla de observaciones registradas"><thead><tr><th>N.º</th><th>Fecha</th><th>Hora</th><th>Franja horaria</th><th>Permanencia (min)</th><th>Espera (min)</th><th>Motivo de visita</th><th>Ocupación al llegar</th><th>¿Encontró lo que buscaba?</th><th>Acción</th></tr></thead><tbody id="recordsBody"></tbody></table></div>
+    </section>
+
+    <section class="panel" id="panel-analysis" role="tabpanel" aria-labelledby="tab-analysis" hidden>
+      <div class="section-head"><span class="section-icon" aria-hidden="true">▤</span><div><h2>Análisis estadístico</h2><p>Medidas descriptivas y distribuciones de frecuencia calculadas con los registros guardados en este dispositivo.</p></div></div>
+      <div class="analysis-controls">
+        <div class="field"><label for="analysisVariable">Variable para analizar</label><div class="select-wrap"><select class="control" id="analysisVariable"></select></div></div>
+        <div class="field"><label for="filterVariable">Filtrar por variable cualitativa <span style="font-weight:500;color:#7b8999">(opcional)</span></label><div class="select-wrap"><select class="control" id="filterVariable"></select></div></div>
+        <div class="field"><label for="filterValue">Categoría del filtro</label><div class="select-wrap"><select class="control" id="filterValue"></select></div></div>
+      </div>
+      <div id="analysisOutput" aria-live="polite"></div>
+    </section>
+    <section class="panel" id="panel-probability" role="tabpanel" aria-labelledby="tab-probability" hidden><div class="section-head"><span class="section-icon" aria-hidden="true">%</span><div><h2>Probabilidad</h2><p>Explora eventos y relaciones entre variables.</p></div></div><div class="construction"><span class="construction-mark">✦</span><div><strong>En construcción</strong>Esta sección se habilitará en una etapa posterior del proyecto.</div></div></section>
+    <section class="panel" id="panel-report" role="tabpanel" aria-labelledby="tab-report" hidden><div class="section-head"><span class="section-icon" aria-hidden="true">▧</span><div><h2>Informe</h2><p>Consulta y presenta los hallazgos del estudio.</p></div></div><div class="construction"><span class="construction-mark">✦</span><div><strong>En construcción</strong>Esta sección se habilitará en una etapa posterior del proyecto.</div></div></section>
+    <footer class="footer">EstadíApp · Proyecto de Aula de Estadística · UNIPAZ</footer>
+  </main>
+  <div class="status" id="status" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      'use strict';
+      const STORAGE_KEY = 'estadiapp_grupo_2_1_biblioteca_v1';
+      const form = document.getElementById('recordForm');
+      const body = document.getElementById('recordsBody');
+      const count = document.getElementById('recordCount');
+      const countWord = document.getElementById('countWord');
+      const status = document.getElementById('status');
+      let records = loadRecords();
+      let statusTimer;
+
+      function localDateTime() {
+        const now = new Date();
+        const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+        return { date: local.toISOString().slice(0, 10), time: local.toISOString().slice(11, 16) };
+      }
+      function setCurrentDateTime() {
+        const now = localDateTime();
+        document.getElementById('date').value = now.date;
+        document.getElementById('time').value = now.time;
+      }
+      function loadRecords() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+          return Array.isArray(parsed) ? parsed.filter(item => item && typeof item === 'object') : [];
+        } catch (error) {
+          return [];
+        }
+      }
+      function persist() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+          return true;
+        } catch (error) {
+          showStatus('No se pudieron guardar los datos en este dispositivo. Revisa el espacio disponible del navegador.', true);
+          return false;
+        }
+      }
+      function showStatus(message, isError = false) {
+        status.textContent = message;
+        status.classList.toggle('error', isError);
+        status.classList.add('show');
+        window.clearTimeout(statusTimer);
+        statusTimer = window.setTimeout(() => status.classList.remove('show'), 3600);
+      }
+      function hourRange(time) {
+        const hour = Number(String(time).split(':')[0]);
+        if (!Number.isInteger(hour) || hour < 0 || hour > 23) return '—';
+        return `${String(hour).padStart(2, '0')}:00–${String(hour).padStart(2, '0')}:59`;
+      }
+      function formatDate(value) {
+        if (!value) return '—';
+        const [year, month, day] = value.split('-');
+        return year && month && day ? `${day}/${month}/${year}` : value;
+      }
+      function escapeHTML(value) {
+        return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+      }
+      const CSV_HEADERS = ['Fecha', 'Hora', 'Franja horaria', 'Tiempo de permanencia (min)', 'Tiempo para conseguir puesto o atención (min)', 'Motivo de la visita', 'Ocupación de la sala al llegar', '¿Encontró lo que buscaba?'];
+      function csvCell(value) {
+        const text = String(value ?? '');
+        return /[;"\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+      }
+      function formatCsvNumber(value) {
+        return String(value).replace('.', ',');
+      }
+      function downloadFile(filename, content, type) {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+      function exportCsv() {
+        const rows = [CSV_HEADERS];
+        records.slice().reverse().forEach(record => rows.push([
+          record.date, record.time, hourRange(record.time), formatCsvNumber(record.stay),
+          formatCsvNumber(record.wait), record.reason, record.occupancy, record.found
+        ]));
+        const csv = '\uFEFF' + rows.map(row => row.map(csvCell).join(';')).join('\r\n');
+        downloadFile('estadiapp_grupo_2_1_biblioteca.csv', csv, 'text/csv;charset=utf-8');
+        showStatus(`CSV exportado con ${records.length} ${records.length === 1 ? 'registro' : 'registros'}.`);
+      }
+      function parseCsv(text) {
+        const source = text.replace(/^\uFEFF/, '');
+        const rows = [];
+        let row = [], cell = '', quoted = false;
+        for (let i = 0; i < source.length; i++) {
+          const char = source[i];
+          if (quoted) {
+            if (char === '"' && source[i + 1] === '"') { cell += '"'; i++; }
+            else if (char === '"') quoted = false;
+            else cell += char;
+          } else if (char === '"' && cell.length === 0) quoted = true;
+          else if (char === ';') { row.push(cell); cell = ''; }
+          else if (char === '\n' || char === '\r') {
+            if (char === '\r' && source[i + 1] === '\n') i++;
+            row.push(cell); cell = '';
+            if (row.some(value => value.trim() !== '')) rows.push(row);
+            row = [];
+          } else cell += char;
+        }
+        row.push(cell);
+        if (row.some(value => value.trim() !== '')) rows.push(row);
+        return rows;
+      }
+      function parseCsvNumber(value) {
+        const normalized = String(value).trim().replace(/\s/g, '').replace(',', '.');
+        if (!normalized || !/^-?(?:\d+\.?\d*|\.\d+)$/.test(normalized)) return NaN;
+        return Number(normalized);
+      }
+      function importCsvFile(file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const rows = parseCsv(String(reader.result || ''));
+            if (!rows.length || rows[0].length !== CSV_HEADERS.length || rows[0].some((header, index) => header.trim() !== CSV_HEADERS[index])) {
+              showStatus('El CSV no tiene las mismas columnas que el archivo exportado por esta app. No se importó ningún registro.', true);
+              return;
+            }
+            const imported = [];
+            let skipped = 0;
+            rows.slice(1).forEach((row, index) => {
+              if (row.length !== CSV_HEADERS.length) { skipped++; return; }
+              const stay = parseCsvNumber(row[3]);
+              const wait = parseCsvNumber(row[4]);
+              if (!/^\d{4}-\d{2}-\d{2}$/.test(row[0]) || !/^\d{2}:\d{2}$/.test(row[1]) || !Number.isFinite(stay) || stay < 0 || !Number.isFinite(wait) || wait < 0 || row.slice(5).some(value => !value.trim())) { skipped++; return; }
+              imported.push({ id: `${Date.now()}_csv_${index}_${Math.random().toString(36).slice(2, 7)}`, date: row[0].trim(), time: row[1].trim(), stay, wait, reason: row[5].trim(), occupancy: row[6].trim(), found: row[7].trim() });
+            });
+            if (!imported.length) { showStatus('El archivo no contiene registros válidos para importar.', true); return; }
+            records = imported.concat(records);
+            if (!persist()) { records.splice(0, imported.length); return; }
+            render();
+            showStatus(`Se importaron ${imported.length} ${imported.length === 1 ? 'registro' : 'registros'} y se unieron a los existentes.${skipped ? ` Se omitieron ${skipped} fila(s) inválida(s).` : ''}`);
+          } catch (error) {
+            showStatus('No se pudo leer el CSV. Verifica que sea un archivo exportado por esta app.', true);
+          }
+        };
+        reader.onerror = () => showStatus('No se pudo leer el archivo CSV.', true);
+        reader.readAsText(file, 'UTF-8');
+      }
+      function downloadBackup() {
+        const backup = { app: 'EstadíApp', group: '2.1', study: 'Ocupación y tiempos de espera en la Biblioteca de UNIPAZ', version: 1, exportedAt: new Date().toISOString(), records };
+        downloadFile('respaldo_estadiapp_grupo_2_1.json', JSON.stringify(backup, null, 2), 'application/json;charset=utf-8');
+        showStatus(`Respaldo descargado con ${records.length} ${records.length === 1 ? 'registro' : 'registros'}.`);
+      }
+      function restoreBackupFile(file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const backup = JSON.parse(String(reader.result || ''));
+            const sourceRecords = Array.isArray(backup) ? backup : backup && Array.isArray(backup.records) ? backup.records : null;
+            if (!sourceRecords || !sourceRecords.every(record => record && /^\d{4}-\d{2}-\d{2}$/.test(record.date) && /^\d{2}:\d{2}$/.test(record.time) && Number.isFinite(Number(record.stay)) && Number(record.stay) >= 0 && Number.isFinite(Number(record.wait)) && Number(record.wait) >= 0 && record.reason && record.occupancy && record.found)) {
+              showStatus('El JSON no tiene un formato de respaldo válido para esta app.', true);
+              return;
+            }
+            if (!window.confirm(`El respaldo contiene ${sourceRecords.length} registros. Restaurarlo reemplazará los ${records.length} registros actuales de este dispositivo. ¿Continuar?`)) return;
+            const previous = records;
+            records = sourceRecords.map((record, index) => ({ ...record, id: `${Date.now()}_json_${index}_${Math.random().toString(36).slice(2, 7)}`, stay: Number(record.stay), wait: Number(record.wait) }));
+            if (!persist()) { records = previous; return; }
+            render();
+            showStatus(`Respaldo restaurado: ${records.length} ${records.length === 1 ? 'registro' : 'registros'}.`);
+          } catch (error) {
+            showStatus('No se pudo abrir el JSON. Selecciona un respaldo válido de EstadíApp.', true);
+          }
+        };
+        reader.onerror = () => showStatus('No se pudo leer el archivo JSON.', true);
+        reader.readAsText(file, 'UTF-8');
+      }
+      const ANALYSIS_VARIABLES = [
+        { key: 'stay', label: 'Tiempo de permanencia (min)', type: 'quantitative' },
+        { key: 'wait', label: 'Tiempo para conseguir puesto o atención (min)', type: 'quantitative' },
+        { key: 'reason', label: 'Motivo de la visita', type: 'qualitative' },
+        { key: 'occupancy', label: 'Ocupación de la sala al llegar', type: 'qualitative' },
+        { key: 'found', label: '¿Encontró lo que buscaba?', type: 'qualitative' },
+        { key: 'hourBand', label: 'Franja horaria', type: 'qualitative' }
+      ];
+      const analysisVariable = document.getElementById('analysisVariable');
+      const filterVariable = document.getElementById('filterVariable');
+      const filterValue = document.getElementById('filterValue');
+      const analysisOutput = document.getElementById('analysisOutput');
+      const numberFormat = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 8 });
+      const percentFormat = new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      function analysisValue(record, key) {
+        return key === 'hourBand' ? hourRange(record.time) : record[key];
+      }
+      function uniqueCategories(sourceRecords, key) {
+        const values = [...new Set(sourceRecords.map(record => String(analysisValue(record, key) ?? '')).filter(Boolean))];
+        if (key === 'hourBand') return values.sort();
+        const variable = ANALYSIS_VARIABLES.find(item => item.key === key);
+        if (variable) {
+          const canonical = {
+            reason: ['Estudio individual', 'Trabajo en grupo', 'Préstamo o consulta de libros', 'Computadores o internet', 'Otro'],
+            occupancy: ['Baja', 'Media', 'Alta', 'Llena'],
+            found: ['Sí', 'Parcialmente', 'No']
+          }[key] || [];
+          return canonical.filter(value => values.includes(value)).concat(values.filter(value => !canonical.includes(value)).sort());
+        }
+        return values.sort();
+      }
+      function filterCategories(key) {
+        const standard = {
+          reason: ['Estudio individual', 'Trabajo en grupo', 'Préstamo o consulta de libros', 'Computadores o internet', 'Otro'],
+          occupancy: ['Baja', 'Media', 'Alta', 'Llena'],
+          found: ['Sí', 'Parcialmente', 'No'],
+          hourBand: Array.from({ length: 24 }, (_, hour) => `${String(hour).padStart(2, '0')}:00–${String(hour).padStart(2, '0')}:59`)
+        }[key] || [];
+        const observed = uniqueCategories(records, key);
+        return standard.concat(observed.filter(value => !standard.includes(value)));
+      }
+      function initializeAnalysis() {
+        analysisVariable.innerHTML = ANALYSIS_VARIABLES.map(variable => `<option value="${variable.key}">${escapeHTML(variable.label)}</option>`).join('');
+        filterVariable.innerHTML = '<option value="">Sin filtro</option>' + ANALYSIS_VARIABLES.filter(variable => variable.type === 'qualitative').map(variable => `<option value="${variable.key}">${escapeHTML(variable.label)}</option>`).join('');
+        analysisVariable.addEventListener('change', renderAnalysis);
+        filterVariable.addEventListener('change', () => { updateFilterValues(); renderAnalysis(); });
+        filterValue.addEventListener('change', renderAnalysis);
+        updateFilterValues();
+      }
+      function updateFilterValues() {
+        const key = filterVariable.value;
+        const previousValue = filterValue.value;
+        const categories = key ? filterCategories(key) : [];
+        filterValue.disabled = false;
+        filterValue.innerHTML = !key
+          ? '<option value="">Selecciona una variable cualitativa primero</option>'
+          : categories.length
+            ? '<option value="">Todas las categorías</option>' + categories.map(value => `<option value="${escapeHTML(value)}">${escapeHTML(value)}</option>`).join('')
+            : '<option value="">Selecciona una variable cualitativa primero</option>';
+        if (categories.includes(previousValue)) filterValue.value = previousValue;
+      }
+      function filteredRecords() {
+        const filterKey = filterVariable.value;
+        const selected = filterValue.value;
+        return records.filter(record => !filterKey || !selected || String(analysisValue(record, filterKey)) === selected);
+      }
+      function tableMarkup(headers, rows) {
+        return `<div class="table-shell"><table class="analysis-table"><thead><tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+      }
+      function frequencyTable(data, variable) {
+        const counts = new Map();
+        const categories = variable.key === 'hourBand' ? uniqueCategories(data, variable.key) : uniqueCategories(data, variable.key);
+        data.forEach(record => {
+          const category = String(analysisValue(record, variable.key));
+          counts.set(category, (counts.get(category) || 0) + 1);
+        });
+        let cumulative = 0;
+        const rows = categories.map(category => {
+          const fi = counts.get(category) || 0;
+          cumulative += fi;
+          const hi = fi / data.length;
+          const Hi = cumulative / data.length;
+          return `<tr><td>${escapeHTML(category)}</td><td>${fi}</td><td>${cumulative}</td><td>${numberFormat.format(hi)}</td><td>${numberFormat.format(Hi)}</td><td>${percentFormat.format(hi * 100)} %</td></tr>`;
+        });
+        return `<div class="analysis-block"><h4>Tabla de frecuencias</h4>${tableMarkup(['Categoría', 'fi', 'Fi', 'hi', 'Hi', '%'], rows)}<p class="analysis-note">hi = fi ÷ n; Hi = Fi ÷ n. El porcentaje corresponde a la frecuencia relativa de cada categoría. La suma de fi es n y la última frecuencia acumulada es 100 %.</p></div>${qualitativeBarChart(data, variable)}`;
+      }
+      function quantile(sorted, proportion) {
+        const position = (sorted.length - 1) * proportion;
+        const lower = Math.floor(position);
+        const upper = Math.ceil(position);
+        if (lower === upper) return sorted[lower];
+        return sorted[lower] + (sorted[upper] - sorted[lower]) * (position - lower);
+      }
+      function buildGroupedBins(values) {
+        const n = values.length;
+        const minimum = Math.min(...values);
+        const maximum = Math.max(...values);
+        const range = maximum - minimum;
+        const classes = Math.max(1, Math.round(1 + 3.322 * Math.log10(n)));
+        const decimals = Math.min(8, Math.max(0, ...values.map(value => {
+          const part = String(value).toLowerCase().split('e')[0].split('.')[1];
+          return part ? part.length : 0;
+        })));
+        const scale = 10 ** decimals;
+        let amplitude = Math.ceil((range / classes) * scale - 1e-10) / scale;
+        if (!(amplitude > 0)) amplitude = 1 / scale;
+        const bins = [];
+        let cumulative = 0;
+        for (let index = 0; index < classes; index++) {
+          const lower = minimum + amplitude * index;
+          const upper = minimum + amplitude * (index + 1);
+          const fi = values.filter(value => index === classes - 1 ? value >= lower && value <= upper + Number.EPSILON * Math.abs(upper) * 4 : value >= lower && value < upper).length;
+          cumulative += fi;
+          bins.push({ index, lower, upper, midpoint: (lower + upper) / 2, fi, cumulative });
+        }
+        return { bins, classes, amplitude, decimals, minimum, maximum, range };
+      }
+      function groupedFrequencyTable(values) {
+        const n = values.length;
+        const grouped = buildGroupedBins(values);
+        const rows = grouped.bins.map(bin => {
+          const hi = (bin.fi / n) * 100;
+          const Hi = (bin.cumulative / n) * 100;
+          const interval = bin.index === grouped.classes - 1 ? `[${numberFormat.format(bin.lower)}, ${numberFormat.format(bin.upper)}]` : `[${numberFormat.format(bin.lower)}, ${numberFormat.format(bin.upper)})`;
+          return `<tr><td>${bin.index + 1}<span class="formula"> · ${interval}</span></td><td>${numberFormat.format(bin.lower)}</td><td>${numberFormat.format(bin.upper)}</td><td>${numberFormat.format(bin.midpoint)}</td><td>${bin.fi}</td><td>${bin.cumulative}</td><td>${percentFormat.format(hi)} %</td><td>${percentFormat.format(Hi)} %</td></tr>`;
+        });
+        return `<div class="analysis-block"><h4>Tabla de frecuencias para datos agrupados</h4>${tableMarkup(['Clase', 'Li', 'Ls', 'Marca de clase xi', 'fi', 'Fi', 'hi (%)', 'Hi (%)'], rows)}<p class="analysis-note">Sturges: k = redondeo de 1 + 3,322 · log₁₀(n) = ${grouped.classes}. Amplitud A = rango ÷ k, redondeada hacia arriba a ${grouped.decimals} decimales: ${numberFormat.format(grouped.amplitude)}. Los intervalos son [Li, Ls), salvo la última clase que incluye ambos límites.</p></div>`;
+      }
+      function histogramSvg(values) {
+        const { bins, classes } = buildGroupedBins(values);
+        const width = 820, height = 410, left = 72, right = 22, top = 34, bottom = 334;
+        const plotWidth = width - left - right, plotHeight = bottom - top;
+        const maxFrequency = Math.max(1, ...bins.map(bin => bin.fi));
+        const tickStep = Math.max(1, Math.ceil(maxFrequency / 4));
+        let grid = '';
+        for (let tick = 0; tick <= maxFrequency; tick += tickStep) {
+          const y = bottom - (tick / maxFrequency) * plotHeight;
+          grid += `<line class="gridline" x1="${left}" y1="${y}" x2="${width - right}" y2="${y}"/><text x="${left - 12}" y="${y + 4}" text-anchor="end" font-size="11">${tick}</text>`;
+        }
+        const slot = plotWidth / classes;
+        const bars = bins.map(bin => {
+          const x = left + bin.index * slot;
+          const barHeight = (bin.fi / maxFrequency) * plotHeight;
+          const y = bottom - barHeight;
+          const label = `${numberFormat.format(bin.lower)}–${numberFormat.format(bin.upper)}`;
+          return `<rect x="${x + 1}" y="${y}" width="${Math.max(1, slot - 2)}" height="${barHeight}" fill="url(#histFill)" stroke="#238f83" stroke-width="1"/><text x="${x + slot / 2}" y="${bottom + 17}" text-anchor="middle" font-size="${classes > 9 ? 9 : 10}">${escapeHTML(label)}</text>`;
+        }).join('');
+        const points = bins.map(bin => {
+          const x = left + (bin.index + 0.5) * slot;
+          const y = bottom - (bin.fi / maxFrequency) * plotHeight;
+          return `${x},${y}`;
+        }).join(' ');
+        const markers = bins.map(bin => {
+          const x = left + (bin.index + 0.5) * slot;
+          const y = bottom - (bin.fi / maxFrequency) * plotHeight;
+          return `<circle cx="${x}" cy="${y}" r="4.5" fill="#fff" stroke="#d98c20" stroke-width="2.5"/>`;
+        }).join('');
+        return `<svg class="chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Histograma con polígono de frecuencias"><title>Histograma y polígono de frecuencias</title><desc>Frecuencias absolutas por intervalo, con el polígono de frecuencias superpuesto.</desc><defs><linearGradient id="histFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#56b9a8"/><stop offset="100%" stop-color="#c9eee6"/></linearGradient></defs>${grid}<line class="axisline" x1="${left}" y1="${top}" x2="${left}" y2="${bottom}"/><line class="axisline" x1="${left}" y1="${bottom}" x2="${width - right}" y2="${bottom}"/>${bars}<polyline points="${points}" fill="none" stroke="#d98c20" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>${markers}<text class="axis-title" x="${(left + width - right) / 2}" y="390" text-anchor="middle" font-size="12">Intervalos de clase</text><text class="axis-title" x="18" y="${(top + bottom) / 2}" text-anchor="middle" font-size="12" transform="rotate(-90 18 ${(top + bottom) / 2})">Frecuencia (fi)</text></svg>`;
+      }
+      function boxPlotSvg(values) {
+        const sorted = values.slice().sort((a, b) => a - b);
+        const minimum = sorted[0], maximum = sorted[sorted.length - 1];
+        const q1 = quantile(sorted, 0.25), median = quantile(sorted, 0.5), q3 = quantile(sorted, 0.75);
+        const mean = sorted.reduce((total, value) => total + value, 0) / sorted.length;
+        const span = maximum - minimum;
+        const pad = span === 0 ? Math.max(Math.abs(minimum) * 0.08, 1) : span * 0.12;
+        const low = minimum - pad, high = maximum + pad;
+        const width = 820, height = 225, left = 68, right = 30, axisY = 158;
+        const plotWidth = width - left - right;
+        const x = value => left + ((value - low) / (high - low)) * plotWidth;
+        const tickCount = 5;
+        let ticks = '';
+        for (let i = 0; i <= tickCount; i++) {
+          const value = low + ((high - low) * i / tickCount);
+          const px = x(value);
+          ticks += `<line class="gridline" x1="${px}" y1="48" x2="${px}" y2="${axisY + 7}"/><line class="axisline" x1="${px}" y1="${axisY}" x2="${px}" y2="${axisY + 5}"/><text x="${px}" y="${axisY + 22}" text-anchor="middle" font-size="10">${numberFormat.format(value)}</text>`;
+        }
+        const boxX = x(q1), boxEnd = x(q3), boxWidth = Math.max(3, boxEnd - boxX);
+        const meanX = x(mean);
+        const diamond = `${meanX},75 ${meanX + 7},82 ${meanX},89 ${meanX - 7},82`;
+        return `<svg class="chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Diagrama de caja y bigotes con media marcada"><title>Diagrama de caja y bigotes</title><desc>Mínimo, primer cuartil, mediana, tercer cuartil y máximo; el rombo marca la media.</desc>${ticks}<line class="axisline" x1="${left}" y1="${axisY}" x2="${width - right}" y2="${axisY}"/><line x1="${x(minimum)}" y1="112" x2="${boxX}" y2="112" stroke="#1f6d79" stroke-width="3"/><line x1="${boxEnd}" y1="112" x2="${x(maximum)}" y2="112" stroke="#1f6d79" stroke-width="3"/><line x1="${x(minimum)}" y1="99" x2="${x(minimum)}" y2="125" stroke="#1f6d79" stroke-width="3"/><line x1="${x(maximum)}" y1="99" x2="${x(maximum)}" y2="125" stroke="#1f6d79" stroke-width="3"/><rect x="${boxX}" y="91" width="${boxWidth}" height="42" rx="7" fill="#d8f1eb" stroke="#238f83" stroke-width="2"/><line x1="${x(median)}" y1="89" x2="${x(median)}" y2="135" stroke="#1F3A5F" stroke-width="3"/><polygon points="${diamond}" fill="#E9A23B" stroke="#9d6717" stroke-width="1.5"/><text class="axis-title" x="${meanX}" y="65" text-anchor="middle" font-size="11">Media ${numberFormat.format(mean)}</text><text class="axis-title" x="${(left + width - right) / 2}" y="210" text-anchor="middle" font-size="12">Valor (minutos)</text></svg>`;
+      }
+      function quantitativeVisuals(values) {
+        const sorted = values.slice().sort((a, b) => a - b);
+        const min = sorted[0], max = sorted[sorted.length - 1];
+        const q1 = quantile(sorted, 0.25), median = quantile(sorted, 0.5), q3 = quantile(sorted, 0.75);
+        const mean = sorted.reduce((total, value) => total + value, 0) / sorted.length;
+        const sd = sorted.length > 1 ? Math.sqrt(sorted.reduce((total, value) => total + (value - mean) ** 2, 0) / (sorted.length - 1)) : null;
+        let skewText;
+        if (sorted.length < 2) skewText = 'No es posible describir el sesgo con una sola observación.';
+        else if (Math.abs(mean - median) <= Math.max((sd || 0) * 0.05, 1e-10)) skewText = `La distribución es aproximadamente simétrica: media ${numberFormat.format(mean)} y mediana ${numberFormat.format(median)} son cercanas.`;
+        else if (mean > median) skewText = `La distribución presenta sesgo positivo: la media (${numberFormat.format(mean)}) es mayor que la mediana (${numberFormat.format(median)}).`;
+        else skewText = `La distribución presenta sesgo negativo: la media (${numberFormat.format(mean)}) es menor que la mediana (${numberFormat.format(median)}).`;
+        let cvText;
+        if (sd === null || mean === 0) cvText = 'El coeficiente de variación no está definido para estos datos, así que no se clasifica la homogeneidad.';
+        else {
+          const cv = Math.abs(sd / mean) * 100;
+          const classification = cv < 15 ? 'homogéneos (CV menor que 15 %)' : cv < 30 ? 'de variabilidad moderada (CV entre 15 % y menos de 30 %)' : 'muy dispersos (CV de 30 % o más)';
+          cvText = `El CV es ${percentFormat.format(cv)} %; según el criterio del proyecto, los datos son ${classification}.`;
+        }
+        return `<div class="visuals-grid"><article class="chart-card"><h4>Histograma y polígono de frecuencias</h4><p>Las barras muestran fi por intervalo; la línea une las marcas de clase.</p><div class="chart-scroll">${histogramSvg(sorted)}</div><div class="chart-legend"><span class="legend-item"><span class="legend-dot"></span>Histograma (fi)</span><span class="legend-item"><span class="legend-line"></span>Polígono de frecuencias</span></div></article><article class="chart-card"><h4>Diagrama de caja y bigotes</h4><p>Resumen de cinco números sobre una escala común; el rombo señala la media.</p><div class="chart-scroll">${boxPlotSvg(sorted)}</div><div class="five-number"><span>Mínimo<strong>${numberFormat.format(min)}</strong></span><span>Q₁<strong>${numberFormat.format(q1)}</strong></span><span>Mediana<strong>${numberFormat.format(median)}</strong></span><span>Q₃<strong>${numberFormat.format(q3)}</strong></span><span>Máximo<strong>${numberFormat.format(max)}</strong></span><span>Media<strong>${numberFormat.format(mean)}</strong></span></div></article></div><div class="insight-card"><span class="insight-icon" aria-hidden="true">✦</span><div><h4>Lectura automática</h4><p>${skewText} ${cvText}</p></div></div>`;
+      }
+      function qualitativeBarChart(data, variable) {
+        const categories = uniqueCategories(data, variable.key);
+        const counts = new Map();
+        data.forEach(record => {
+          const category = String(analysisValue(record, variable.key));
+          counts.set(category, (counts.get(category) || 0) + 1);
+        });
+        const sorted = categories.map(category => ({ category, fi: counts.get(category) || 0 })).sort((a, b) => b.fi - a.fi || categories.indexOf(a.category) - categories.indexOf(b.category));
+        const maxCount = Math.max(1, ...sorted.map(item => item.fi));
+        const width = 840, left = 270, right = 95, top = 28, rowHeight = 38, bottom = top + sorted.length * rowHeight + 26;
+        const plotWidth = width - left - right;
+        const tickStep = Math.max(1, Math.ceil(maxCount / 4));
+        let grid = '';
+        for (let tick = 0; tick <= maxCount; tick += tickStep) {
+          const px = left + (tick / maxCount) * plotWidth;
+          grid += `<line class="gridline" x1="${px}" y1="${top - 8}" x2="${px}" y2="${bottom - 20}"/><text x="${px}" y="${bottom - 4}" text-anchor="middle" font-size="10">${tick}</text>`;
+        }
+        const bars = sorted.map((item, index) => {
+          const y = top + index * rowHeight;
+          const barWidth = (item.fi / maxCount) * plotWidth;
+          const pct = (item.fi / data.length) * 100;
+          return `<text x="${left - 12}" y="${y + 17}" text-anchor="end" font-size="11">${escapeHTML(item.category)}</text><rect x="${left}" y="${y}" width="${barWidth}" height="23" rx="6" fill="url(#qualFill)"/><text x="${Math.min(left + barWidth + 8, width - 72)}" y="${y + 16}" font-size="10" font-weight="700">${item.fi} · ${percentFormat.format(pct)} %</text>`;
+        }).join('');
+        const mostCommon = sorted.filter(item => item.fi === maxCount);
+        const leaders = mostCommon.map(item => `«${item.category}»`).join(', ');
+        const leaderPct = percentFormat.format((maxCount / data.length) * 100);
+        const insight = mostCommon.length > 1 ? `Las categorías más frecuentes son ${leaders}, con ${maxCount} observaciones cada una (${leaderPct} % por categoría).` : `La categoría más frecuente es ${leaders}, con ${maxCount} ${maxCount === 1 ? 'observación' : 'observaciones'} (${leaderPct} %).`;
+        const svg = `<svg class="chart-svg" viewBox="0 0 ${width} ${bottom + 24}" role="img" aria-label="Gráfico de barras horizontales de ${escapeHTML(variable.label)}"><title>Frecuencias por categoría</title><desc>Barras horizontales con frecuencia absoluta y porcentaje de cada categoría.</desc><defs><linearGradient id="qualFill" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#238f83"/><stop offset="100%" stop-color="#75cdbb"/></linearGradient></defs>${grid}${bars}<line class="axisline" x1="${left}" y1="${bottom - 20}" x2="${width - right}" y2="${bottom - 20}"/><text class="axis-title" x="${left + plotWidth / 2}" y="${bottom + 17}" text-anchor="middle" font-size="12">Frecuencia (fi)</text></svg>`;
+        return `<div class="visuals-grid"><article class="chart-card"><h4>Frecuencia por categoría</h4><p>Longitud de la barra = frecuencia; junto a cada barra aparecen fi y porcentaje.</p><div class="chart-scroll">${svg}</div></article></div><div class="insight-card"><span class="insight-icon" aria-hidden="true">✦</span><div><h4>Lectura automática</h4><p>${insight}</p></div></div>`;
+      }
+      function quantitativeAnalysis(data, variable) {
+        const values = data.map(record => Number(record[variable.key])).filter(Number.isFinite).sort((a, b) => a - b);
+        const n = values.length;
+        if (!n) return '<div class="analysis-empty">No hay valores numéricos válidos para esta variable.</div>';
+        const sum = values.reduce((total, value) => total + value, 0);
+        const mean = sum / n;
+        const median = quantile(values, 0.5);
+        const frequencies = new Map();
+        values.forEach(value => frequencies.set(value, (frequencies.get(value) || 0) + 1));
+        const highestFrequency = Math.max(...frequencies.values());
+        const modes = highestFrequency > 1 ? [...frequencies].filter(([, count]) => count === highestFrequency).map(([value]) => numberFormat.format(value)).join(', ') : 'No hay moda';
+        const minimum = values[0], maximum = values[n - 1], range = maximum - minimum;
+        const variance = n > 1 ? values.reduce((total, value) => total + (value - mean) ** 2, 0) / (n - 1) : null;
+        const deviation = variance === null ? null : Math.sqrt(variance);
+        const cv = deviation !== null && mean !== 0 ? Math.abs(deviation / mean) * 100 : null;
+        const q1 = quantile(values, 0.25), q2 = quantile(values, 0.5), q3 = quantile(values, 0.75), iqr = q3 - q1;
+        const show = value => value === null || !Number.isFinite(value) ? 'No definido' : numberFormat.format(value);
+        const stats = [
+          ['n', n, 'Número de observaciones'], ['Suma', show(sum), 'Σxᵢ'], ['Media', show(mean), 'Σxᵢ ÷ n'],
+          ['Mediana', show(median), 'Q₂; método CUARTIL.INC de Excel'], ['Moda', modes, 'Valor(es) de mayor frecuencia'],
+          ['Mínimo', show(minimum), 'Menor valor observado'], ['Máximo', show(maximum), 'Mayor valor observado'], ['Rango', show(range), 'Máximo − mínimo'],
+          ['Varianza muestral', show(variance), 'Σ(xᵢ − x̄)² ÷ (n − 1)'], ['Desviación estándar muestral', show(deviation), '√ varianza muestral'],
+          ['Coeficiente de variación', cv === null ? 'No definido' : `${percentFormat.format(cv)} %`, '(s ÷ |x̄|) × 100'],
+          ['Q₁', show(q1), 'CUARTIL.INC(datos; 1)'], ['Q₂', show(q2), 'CUARTIL.INC(datos; 2)'], ['Q₃', show(q3), 'CUARTIL.INC(datos; 3)'], ['RIC', show(iqr), 'Q₃ − Q₁']
+        ];
+        const rows = stats.map(([label, value, formula]) => `<tr><td>${label}</td><td>${value}</td><td class="formula">${formula}</td></tr>`);
+        const note = n < 2 ? '<p class="analysis-note">La varianza y desviación estándar muestrales requieren al menos dos observaciones.</p>' : '';
+        return `<div class="analysis-block"><h4>Medidas descriptivas</h4>${tableMarkup(['Medida', 'Resultado', 'Fórmula / método'], rows)}${note}</div>${groupedFrequencyTable(values)}${quantitativeVisuals(values)}`;
+      }
+      function renderAnalysis() {
+        if (!analysisVariable || !filterVariable || !analysisOutput) return;
+        updateFilterValues();
+        const selected = ANALYSIS_VARIABLES.find(variable => variable.key === analysisVariable.value) || ANALYSIS_VARIABLES[0];
+        const data = filteredRecords();
+        const filterDescription = filterVariable.value && filterValue.value ? `Filtro: ${filterVariable.options[filterVariable.selectedIndex].text} = ${filterValue.value}` : 'Sin filtro aplicado';
+        if (!data.length) {
+          analysisOutput.innerHTML = `<div class="analysis-empty"><strong>No hay registros${records.length ? ' que coincidan con el filtro seleccionado' : ' todavía'}.</strong> Agrega observaciones en la pestaña Registrar para ver el análisis.<label class="empty-note-label" for="emptyAnalysisNote">Observación o justificación</label><textarea class="empty-note" id="emptyAnalysisNote" placeholder="Escribe aquí una observación, explicación o justificación…"></textarea><p class="empty-note-help" id="emptyNoteHelp">Esta nota se guarda automáticamente en este dispositivo.</p></div>`;
+          let savedNote = '';
+          try { savedNote = localStorage.getItem('estadiapp_grupo_2_1_analysis_empty_note') || ''; } catch (error) { /* La nota queda editable aunque el navegador bloquee el almacenamiento. */ }
+          const noteField = document.getElementById('emptyAnalysisNote');
+          if (noteField) noteField.value = savedNote;
+          return;
+        }
+        let details;
+        if (selected.type === 'quantitative') details = quantitativeAnalysis(data, selected);
+        else details = frequencyTable(data, selected);
+        analysisOutput.innerHTML = `<div class="analysis-summary"><h3>${escapeHTML(selected.label)}</h3><span class="analysis-count">n = ${data.length}</span><p>${escapeHTML(filterDescription)}</p></div>${details}`;
+      }
+      analysisOutput.addEventListener('input', event => {
+        if (event.target.id !== 'emptyAnalysisNote') return;
+        try {
+          localStorage.setItem('estadiapp_grupo_2_1_analysis_empty_note', event.target.value);
+          const help = document.getElementById('emptyNoteHelp');
+          if (help) help.textContent = 'Nota guardada en este dispositivo.';
+        } catch (error) {
+          const help = document.getElementById('emptyNoteHelp');
+          if (help) help.textContent = 'No se pudo guardar la nota; revisa el espacio del navegador.';
+        }
+      });
+      function render() {
+        count.textContent = String(records.length);
+        countWord.textContent = records.length === 1 ? 'registro' : 'registros';
+        if (filterVariable) updateFilterValues();
+        if (analysisOutput) renderAnalysis();
+        if (!records.length) {
+          body.innerHTML = '<tr><td colspan="10" class="empty-cell"><div class="empty"><strong>Aún no hay observaciones</strong>Completa el formulario para guardar el primer registro.</div></td></tr>';
+          return;
+        }
+        body.innerHTML = records.map((record, index) => {
+          const number = records.length - index;
+          return `<tr>
+            <td class="row-number">${number}</td><td>${escapeHTML(formatDate(record.date))}</td><td>${escapeHTML(record.time)}</td>
+            <td><span class="badge">${escapeHTML(hourRange(record.time))}</span></td>
+            <td>${escapeHTML(record.stay)}</td><td>${escapeHTML(record.wait)}</td>
+            <td>${escapeHTML(record.reason)}</td><td>${escapeHTML(record.occupancy)}</td><td>${escapeHTML(record.found)}</td>
+            <td><button class="btn btn-danger" type="button" data-delete="${escapeHTML(record.id)}" aria-label="Eliminar registro ${number}">Eliminar</button></td>
+          </tr>`;
+        }).join('');
+      }
+
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        const fields = ['date', 'time', 'stay', 'wait', 'reason', 'occupancy', 'found'];
+        let firstInvalid = null;
+        for (const name of fields) {
+          const input = form.elements.namedItem(name);
+          if (!input.value.trim() || !input.checkValidity()) {
+            firstInvalid = input;
+            break;
+          }
+        }
+        if (firstInvalid) {
+          firstInvalid.focus();
+          showStatus(firstInvalid.validity.rangeUnderflow ? 'Los tiempos no pueden ser negativos.' : 'Completa todos los campos correctamente antes de guardar.', true);
+          return;
+        }
+        const record = {
+          id: `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+          date: form.elements.date.value,
+          time: form.elements.time.value,
+          stay: Number(form.elements.stay.value),
+          wait: Number(form.elements.wait.value),
+          reason: form.elements.reason.value,
+          occupancy: form.elements.occupancy.value,
+          found: form.elements.found.value
+        };
+        records.unshift(record);
+        if (!persist()) { records.shift(); return; }
+        render();
+        form.reset();
+        setCurrentDateTime();
+        document.getElementById('stay').focus();
+        showStatus('Registro guardado correctamente.');
+      });
+
+      body.addEventListener('click', event => {
+        const button = event.target.closest('[data-delete]');
+        if (!button) return;
+        const target = records.findIndex(record => String(record.id) === button.dataset.delete);
+        if (target < 0) return;
+        if (!window.confirm('¿Quieres eliminar este registro? Esta acción no se puede deshacer.')) return;
+        const removed = records.splice(target, 1)[0];
+        if (!persist()) { records.splice(target, 0, removed); return; }
+        render();
+        showStatus('Registro eliminado.');
+      });
+
+      document.getElementById('clearAll').addEventListener('click', () => {
+        if (!records.length) { showStatus('No hay registros para borrar.'); return; }
+        if (!window.confirm(`¿Eliminar los ${records.length} registros guardados en este dispositivo? Esta acción no se puede deshacer.`)) return;
+        const previous = records;
+        records = [];
+        if (!persist()) { records = previous; return; }
+        render();
+        showStatus('Se eliminaron todos los registros.');
+      });
+
+      document.getElementById('exportCsv').addEventListener('click', exportCsv);
+      document.getElementById('importCsvButton').addEventListener('click', () => document.getElementById('csvFile').click());
+      document.getElementById('csvFile').addEventListener('change', event => {
+        const file = event.target.files && event.target.files[0];
+        if (file) importCsvFile(file);
+        event.target.value = '';
+      });
+      document.getElementById('downloadBackup').addEventListener('click', downloadBackup);
+      document.getElementById('restoreBackupButton').addEventListener('click', () => document.getElementById('jsonFile').click());
+      document.getElementById('jsonFile').addEventListener('change', event => {
+        const file = event.target.files && event.target.files[0];
+        if (file) restoreBackupFile(file);
+        event.target.value = '';
+      });
+
+      const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => activateTab(tab));
+        tab.addEventListener('keydown', event => {
+          let next = index;
+          if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+          else if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+          else if (event.key === 'Home') next = 0;
+          else if (event.key === 'End') next = tabs.length - 1;
+          else return;
+          event.preventDefault();
+          activateTab(tabs[next]);
+          tabs[next].focus();
+        });
+      });
+      function activateTab(tab) {
+        tabs.forEach(item => {
+          const selected = item === tab;
+          item.setAttribute('aria-selected', String(selected));
+          item.tabIndex = selected ? 0 : -1;
+          document.getElementById(item.getAttribute('aria-controls')).hidden = !selected;
+        });
+      }
+
+      initializeAnalysis();
+      setCurrentDateTime();
+      render();
+    })();
+  </script>
+</body>
+</html>
