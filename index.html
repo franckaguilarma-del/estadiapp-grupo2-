@@ -57,6 +57,14 @@
       <p class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3m-4 4v3"/></svg><span>Los registros se almacenan localmente en este navegador. No incluyas nombres ni datos que identifiquen a las personas observadas.</span></p>
 
       <div class="records-head"><div><h3>Registros guardados</h3><p class="records-sub">Más recientes primero · Franja horaria calculada desde la hora de llegada</p></div><button class="btn btn-secondary" id="clearAll" type="button">Borrar todos los registros</button></div>
+      <div class="actions data-actions" aria-label="Exportar, importar y respaldar datos">
+        <button class="btn btn-secondary" id="exportCsv" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v3h14v-3"/></svg>Exportar CSV (Excel)</button>
+        <button class="btn btn-secondary" id="importCsvButton" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3m0 0L8 7m4-4 4 4M5 17v3h14v-3"/></svg>Importar CSV y unir</button>
+        <button class="btn btn-secondary" id="downloadBackup" type="button">Descargar respaldo (.json)</button>
+        <button class="btn btn-secondary" id="restoreBackupButton" type="button">Restaurar respaldo</button>
+        <input class="sr-only" id="csvFile" type="file" accept=".csv,text/csv" tabindex="-1" aria-hidden="true">
+        <input class="sr-only" id="jsonFile" type="file" accept=".json,application/json" tabindex="-1" aria-hidden="true">
+      </div>
       <div class="table-shell"><table aria-label="Tabla de observaciones registradas"><thead><tr><th>N.º</th><th>Fecha</th><th>Hora</th><th>Franja horaria</th><th>Permanencia (min)</th><th>Espera (min)</th><th>Motivo de visita</th><th>Ocupación al llegar</th><th>¿Encontró lo que buscaba?</th><th>Acción</th></tr></thead><tbody id="recordsBody"></tbody></table></div>
     </section>
 
@@ -125,6 +133,121 @@
       }
       function escapeHTML(value) {
         return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+      }
+      const CSV_HEADERS = ['Fecha', 'Hora', 'Franja horaria', 'Tiempo de permanencia (min)', 'Tiempo para conseguir puesto o atención (min)', 'Motivo de la visita', 'Ocupación de la sala al llegar', '¿Encontró lo que buscaba?'];
+      function csvCell(value) {
+        const text = String(value ?? '');
+        return /[;"\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+      }
+      function formatCsvNumber(value) {
+        return String(value).replace('.', ',');
+      }
+      function downloadFile(filename, content, type) {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+      function exportCsv() {
+        const rows = [CSV_HEADERS];
+        records.slice().reverse().forEach(record => rows.push([
+          record.date, record.time, hourRange(record.time), formatCsvNumber(record.stay),
+          formatCsvNumber(record.wait), record.reason, record.occupancy, record.found
+        ]));
+        const csv = '\uFEFF' + rows.map(row => row.map(csvCell).join(';')).join('\r\n');
+        downloadFile('estadiapp_grupo_2_1_biblioteca.csv', csv, 'text/csv;charset=utf-8');
+        showStatus(`CSV exportado con ${records.length} ${records.length === 1 ? 'registro' : 'registros'}.`);
+      }
+      function parseCsv(text) {
+        const source = text.replace(/^\uFEFF/, '');
+        const rows = [];
+        let row = [], cell = '', quoted = false;
+        for (let i = 0; i < source.length; i++) {
+          const char = source[i];
+          if (quoted) {
+            if (char === '"' && source[i + 1] === '"') { cell += '"'; i++; }
+            else if (char === '"') quoted = false;
+            else cell += char;
+          } else if (char === '"' && cell.length === 0) quoted = true;
+          else if (char === ';') { row.push(cell); cell = ''; }
+          else if (char === '\n' || char === '\r') {
+            if (char === '\r' && source[i + 1] === '\n') i++;
+            row.push(cell); cell = '';
+            if (row.some(value => value.trim() !== '')) rows.push(row);
+            row = [];
+          } else cell += char;
+        }
+        row.push(cell);
+        if (row.some(value => value.trim() !== '')) rows.push(row);
+        return rows;
+      }
+      function parseCsvNumber(value) {
+        const normalized = String(value).trim().replace(/\s/g, '').replace(',', '.');
+        if (!normalized || !/^-?(?:\d+\.?\d*|\.\d+)$/.test(normalized)) return NaN;
+        return Number(normalized);
+      }
+      function importCsvFile(file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const rows = parseCsv(String(reader.result || ''));
+            if (!rows.length || rows[0].length !== CSV_HEADERS.length || rows[0].some((header, index) => header.trim() !== CSV_HEADERS[index])) {
+              showStatus('El CSV no tiene las mismas columnas que el archivo exportado por esta app. No se importó ningún registro.', true);
+              return;
+            }
+            const imported = [];
+            let skipped = 0;
+            rows.slice(1).forEach((row, index) => {
+              if (row.length !== CSV_HEADERS.length) { skipped++; return; }
+              const stay = parseCsvNumber(row[3]);
+              const wait = parseCsvNumber(row[4]);
+              if (!/^\d{4}-\d{2}-\d{2}$/.test(row[0]) || !/^\d{2}:\d{2}$/.test(row[1]) || !Number.isFinite(stay) || stay < 0 || !Number.isFinite(wait) || wait < 0 || row.slice(5).some(value => !value.trim())) { skipped++; return; }
+              imported.push({ id: `${Date.now()}_csv_${index}_${Math.random().toString(36).slice(2, 7)}`, date: row[0].trim(), time: row[1].trim(), stay, wait, reason: row[5].trim(), occupancy: row[6].trim(), found: row[7].trim() });
+            });
+            if (!imported.length) { showStatus('El archivo no contiene registros válidos para importar.', true); return; }
+            records = imported.concat(records);
+            if (!persist()) { records.splice(0, imported.length); return; }
+            render();
+            showStatus(`Se importaron ${imported.length} ${imported.length === 1 ? 'registro' : 'registros'} y se unieron a los existentes.${skipped ? ` Se omitieron ${skipped} fila(s) inválida(s).` : ''}`);
+          } catch (error) {
+            showStatus('No se pudo leer el CSV. Verifica que sea un archivo exportado por esta app.', true);
+          }
+        };
+        reader.onerror = () => showStatus('No se pudo leer el archivo CSV.', true);
+        reader.readAsText(file, 'UTF-8');
+      }
+      function downloadBackup() {
+        const backup = { app: 'EstadíApp', group: '2.1', study: 'Ocupación y tiempos de espera en la Biblioteca de UNIPAZ', version: 1, exportedAt: new Date().toISOString(), records };
+        downloadFile('respaldo_estadiapp_grupo_2_1.json', JSON.stringify(backup, null, 2), 'application/json;charset=utf-8');
+        showStatus(`Respaldo descargado con ${records.length} ${records.length === 1 ? 'registro' : 'registros'}.`);
+      }
+      function restoreBackupFile(file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const backup = JSON.parse(String(reader.result || ''));
+            const sourceRecords = Array.isArray(backup) ? backup : backup && Array.isArray(backup.records) ? backup.records : null;
+            if (!sourceRecords || !sourceRecords.every(record => record && /^\d{4}-\d{2}-\d{2}$/.test(record.date) && /^\d{2}:\d{2}$/.test(record.time) && Number.isFinite(Number(record.stay)) && Number(record.stay) >= 0 && Number.isFinite(Number(record.wait)) && Number(record.wait) >= 0 && record.reason && record.occupancy && record.found)) {
+              showStatus('El JSON no tiene un formato de respaldo válido para esta app.', true);
+              return;
+            }
+            if (!window.confirm(`El respaldo contiene ${sourceRecords.length} registros. Restaurarlo reemplazará los ${records.length} registros actuales de este dispositivo. ¿Continuar?`)) return;
+            const previous = records;
+            records = sourceRecords.map((record, index) => ({ ...record, id: `${Date.now()}_json_${index}_${Math.random().toString(36).slice(2, 7)}`, stay: Number(record.stay), wait: Number(record.wait) }));
+            if (!persist()) { records = previous; return; }
+            render();
+            showStatus(`Respaldo restaurado: ${records.length} ${records.length === 1 ? 'registro' : 'registros'}.`);
+          } catch (error) {
+            showStatus('No se pudo abrir el JSON. Selecciona un respaldo válido de EstadíApp.', true);
+          }
+        };
+        reader.onerror = () => showStatus('No se pudo leer el archivo JSON.', true);
+        reader.readAsText(file, 'UTF-8');
       }
       function render() {
         count.textContent = String(records.length);
@@ -200,6 +323,21 @@
         if (!persist()) { records = previous; return; }
         render();
         showStatus('Se eliminaron todos los registros.');
+      });
+
+      document.getElementById('exportCsv').addEventListener('click', exportCsv);
+      document.getElementById('importCsvButton').addEventListener('click', () => document.getElementById('csvFile').click());
+      document.getElementById('csvFile').addEventListener('change', event => {
+        const file = event.target.files && event.target.files[0];
+        if (file) importCsvFile(file);
+        event.target.value = '';
+      });
+      document.getElementById('downloadBackup').addEventListener('click', downloadBackup);
+      document.getElementById('restoreBackupButton').addEventListener('click', () => document.getElementById('jsonFile').click());
+      document.getElementById('jsonFile').addEventListener('change', event => {
+        const file = event.target.files && event.target.files[0];
+        if (file) restoreBackupFile(file);
+        event.target.value = '';
       });
 
       const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
