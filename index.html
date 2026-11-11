@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1F3A5F">
+  <meta name="description" content="Registro de observaciones sobre ocupación y tiempos de espera en la Biblioteca de UNIPAZ.">
+  <title>EstadíApp – Grupo 2.1 | Biblioteca UNIPAZ</title>
+  <style>
+    :root{--navy:#1F3A5F;--teal:#2A9D8F;--amber:#E9A23B;--ink:#203047;--muted:#68778b;--paper:#fff;--bg:#f2f6fa;--line:#dce5ee;--danger:#b42318;--shadow:0 14px 38px rgba(31,58,95,.09);--radius:18px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}button,input,select{font:inherit}button{cursor:pointer}.page{width:min(1160px,100% - 32px);margin:auto;padding:28px 0 48px}
+    .hero{position:relative;overflow:hidden;padding:30px clamp(22px,5vw,48px);border-radius:24px;background:linear-gradient(120deg,#173354 0%,#1F3A5F 58%,#245b73 100%);color:white;box-shadow:var(--shadow)}.hero:after{content:"";position:absolute;width:260px;height:260px;border:1px solid rgba(255,255,255,.13);border-radius:50%;right:-70px;top:-100px;box-shadow:0 0 0 28px rgba(255,255,255,.035),0 0 0 58px rgba(255,255,255,.025)}.eyebrow{margin:0 0 10px;color:#b9eee2;font-size:.76rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.hero h1{position:relative;z-index:1;margin:0;font-size:clamp(1.8rem,4vw,3rem);line-height:1.08;letter-spacing:-.035em}.hero .subtitle{position:relative;z-index:1;max-width:690px;margin:14px 0 0;color:#e4edf5;font-size:clamp(1rem,2vw,1.16rem)}.hero-meta{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:7px 12px;background:rgba(255,255,255,.09);font-size:.84rem;color:#f6fbff}.chip-dot{width:8px;height:8px;border-radius:50%;background:var(--amber)}
+    .summary{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:20px 0 14px}.summary-note{margin:0;color:var(--muted);font-size:.92rem}.count-card{display:flex;align-items:center;gap:12px;padding:10px 15px;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:0 5px 16px rgba(31,58,95,.04)}.count-number{display:grid;place-items:center;min-width:42px;height:42px;padding:0 8px;border-radius:12px;background:#e6f5f2;color:#176e63;font-size:1.2rem;font-weight:850}.count-label{font-size:.82rem;color:var(--muted);line-height:1.2}.count-label strong{display:block;color:var(--navy);font-size:.92rem}
+    .tabs{display:flex;gap:5px;padding:6px;overflow:auto;border:1px solid var(--line);border-radius:15px;background:#e8eef4}.tab{flex:1;min-width:max-content;border:0;border-radius:10px;padding:11px 16px;background:transparent;color:#53647a;font-weight:750;transition:.18s}.tab:hover{background:#fff;color:var(--navy)}.tab[aria-selected="true"]{background:var(--navy);color:#fff;box-shadow:0 4px 12px rgba(31,58,95,.2)}
+    .panel{margin-top:16px;padding:clamp(18px,4vw,32px);border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);box-shadow:var(--shadow)}.panel[hidden]{display:none}.section-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:22px}.section-icon{display:grid;place-items:center;flex:0 0 44px;height:44px;border-radius:13px;background:#e6f5f2;color:#177568}.section-icon svg{width:22px;height:22px}.section-head h2{margin:0;color:var(--navy);font-size:1.35rem;letter-spacing:-.02em}.section-head p{margin:4px 0 0;color:var(--muted);font-size:.93rem}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 20px}.field{min-width:0}.field.full{grid-column:1/-1}.field label{display:flex;align-items:center;gap:7px;margin-bottom:7px;color:#263d58;font-weight:750;font-size:.9rem}.required{color:#c45525}.field-hint{margin:6px 0 0;color:#748399;font-size:.78rem}.control{width:100%;min-height:47px;padding:11px 13px;border:1px solid #cbd7e3;border-radius:11px;background:#fff;color:#203047;outline:none;transition:border-color .15s,box-shadow .15s}.control:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,157,143,.15)}.control:invalid:not(:focus):not(:placeholder-shown){border-color:#e0a09a}.select-wrap{position:relative}.select-wrap:after{content:"";position:absolute;right:15px;top:18px;width:8px;height:8px;border-right:2px solid #63758a;border-bottom:2px solid #63758a;transform:rotate(45deg);pointer-events:none}.select-wrap select{appearance:none;padding-right:40px}.actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:24px}.btn{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:46px;padding:11px 18px;border:0;border-radius:11px;font-weight:800;transition:transform .15s,filter .15s,box-shadow .15s}.btn:hover{filter:brightness(1.04);transform:translateY(-1px)}.btn:active{transform:translateY(0)}.btn-primary{background:var(--teal);color:#fff;box-shadow:0 5px 12px rgba(42,157,143,.2)}.btn-secondary{border:1px solid var(--line);background:white;color:#43566e}.btn-danger{min-height:35px;padding:7px 10px;border:1px solid #f2c9c5;background:#fff7f6;color:var(--danger);font-size:.8rem}.btn svg{width:18px;height:18px}.privacy-note{display:flex;gap:9px;align-items:flex-start;margin:20px 0 0;padding:12px 14px;border-radius:11px;background:#f3f7fa;color:#62738a;font-size:.82rem}.privacy-note svg{flex:0 0 17px;width:17px;height:17px;margin-top:1px;color:var(--teal)}
+    .records-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:28px 0 12px}.records-head h3{margin:0;color:var(--navy);font-size:1.05rem}.records-sub{margin:3px 0 0;color:var(--muted);font-size:.82rem}.table-shell{overflow:auto;border:1px solid var(--line);border-radius:13px}table{width:100%;min-width:940px;border-collapse:collapse;background:#fff;font-size:.83rem}thead{background:#edf3f7}th,td{padding:12px 12px;text-align:left;vertical-align:middle;border-bottom:1px solid #e8edf2}th{color:#38506b;font-size:.76rem;letter-spacing:.025em;white-space:nowrap}tbody tr:last-child td{border-bottom:0}tbody tr:hover{background:#f8fbfd}.row-number{color:#6e7d91;font-variant-numeric:tabular-nums}.empty{padding:28px 16px;text-align:center;color:#738198}.empty strong{display:block;margin-bottom:3px;color:#40556e}.empty-cell{text-align:center!important}.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#edf5f3;color:#226e65;font-size:.75rem;font-weight:700;white-space:nowrap}.status{position:fixed;z-index:5;right:18px;bottom:18px;max-width:min(420px,calc(100% - 36px));padding:13px 17px;border-radius:12px;background:#183754;color:white;box-shadow:0 12px 28px rgba(21,47,74,.24);font-size:.91rem;font-weight:650;opacity:0;transform:translateY(12px);pointer-events:none;transition:.22s}.status.show{opacity:1;transform:translateY(0)}.status.error{background:#9e3028}.construction{display:flex;align-items:center;gap:14px;min-height:145px;padding:24px;border:1px dashed #b8c8d7;border-radius:14px;background:#f8fafc;color:#63758a}.construction-mark{display:grid;place-items:center;flex:0 0 44px;height:44px;border-radius:13px;background:#fff1d9;color:#986416;font-size:1.25rem}.construction strong{display:block;margin-bottom:3px;color:var(--navy);font-size:1.05rem}.footer{padding:18px 4px 0;text-align:center;color:#7e8b9b;font-size:.78rem}.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:680px){.page{width:min(100% - 20px,1160px);padding-top:10px}.hero{padding:25px 21px;border-radius:19px}.hero:after{right:-150px}.summary{align-items:flex-start}.summary-note{max-width:52%;font-size:.83rem}.count-card{padding:8px 10px;gap:8px}.count-number{min-width:38px;height:38px}.tabs{gap:3px;padding:4px}.tab{padding:10px 13px;font-size:.84rem}.panel{padding:19px 15px}.form-grid{grid-template-columns:1fr;gap:14px}.field.full{grid-column:auto}.actions .btn{width:100%}.records-head{align-items:flex-start;flex-direction:column}.btn-secondary{width:100%}.section-head{margin-bottom:18px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">Proyecto de Aula · Estadística</p>
+      <h1>EstadíApp <span style="color:#aee5d9">Grupo 2.1</span></h1>
+      <p class="subtitle">Ocupación y tiempos de espera en la Biblioteca de UNIPAZ</p>
+      <div class="hero-meta"><span class="chip"><span class="chip-dot"></span>Registro de observaciones</span><span class="chip">Biblioteca · UNIPAZ</span></div>
+    </header>
+
+    <section class="summary" aria-label="Resumen de registros">
+      <p class="summary-note">Registra cada visita observada. Los datos se guardan en este dispositivo.</p>
+      <div class="count-card"><span class="count-number" id="recordCount">0</span><span class="count-label"><strong id="countWord">registros</strong>guardados</span></div>
+    </section>
+
+    <nav class="tabs" role="tablist" aria-label="Secciones de la aplicación">
+      <button class="tab" id="tab-register" type="button" role="tab" aria-selected="true" aria-controls="panel-register">Registrar</button>
+      <button class="tab" id="tab-analysis" type="button" role="tab" aria-selected="false" aria-controls="panel-analysis" tabindex="-1">Análisis</button>
+      <button class="tab" id="tab-probability" type="button" role="tab" aria-selected="false" aria-controls="panel-probability" tabindex="-1">Probabilidad</button>
+      <button class="tab" id="tab-report" type="button" role="tab" aria-selected="false" aria-controls="panel-report" tabindex="-1">Informe</button>
+    </nav>
+
+    <section class="panel" id="panel-register" role="tabpanel" aria-labelledby="tab-register">
+      <div class="section-head"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 4.5h8M9 3h6v3H9zM6 5.5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-12a2 2 0 0 0-2-2h-1"/><path d="m8 13 2.3 2.3L16.5 9"/></svg></span><div><h2>Registrar observación</h2><p>Completa la fecha, la hora y las características de la visita a la biblioteca.</p></div></div>
+      <form id="recordForm" novalidate>
+        <div class="form-grid">
+          <div class="field"><label for="date">Fecha <span class="required" aria-hidden="true">*</span></label><input class="control" id="date" name="date" type="date" required></div>
+          <div class="field"><label for="time">Hora de llegada <span class="required" aria-hidden="true">*</span></label><input class="control" id="time" name="time" type="time" required><p class="field-hint">Se usará para calcular la franja horaria.</p></div>
+          <div class="field"><label for="stay">Tiempo de permanencia (min) <span class="required" aria-hidden="true">*</span></label><input class="control" id="stay" name="stay" type="number" inputmode="decimal" min="0" step="any" placeholder="Ej.: 45,5" required><p class="field-hint">En minutos; admite decimales.</p></div>
+          <div class="field"><label for="wait">Tiempo para conseguir puesto o atención (min) <span class="required" aria-hidden="true">*</span></label><input class="control" id="wait" name="wait" type="number" inputmode="decimal" min="0" step="any" placeholder="Ej.: 8" required><p class="field-hint">En minutos; admite decimales.</p></div>
+          <div class="field"><label for="reason">Motivo de la visita <span class="required" aria-hidden="true">*</span></label><div class="select-wrap"><select class="control" id="reason" name="reason" required><option value="">Selecciona una opción</option><option>Estudio individual</option><option>Trabajo en grupo</option><option>Préstamo o consulta de libros</option><option>Computadores o internet</option><option>Otro</option></select></div></div>
+          <div class="field"><label for="occupancy">Ocupación de la sala al llegar <span class="required" aria-hidden="true">*</span></label><div class="select-wrap"><select class="control" id="occupancy" name="occupancy" required><option value="">Selecciona una opción</option><option>Baja</option><option>Media</option><option>Alta</option><option>Llena</option></select></div></div>
+          <div class="field full"><label for="found">¿Encontró lo que buscaba? <span class="required" aria-hidden="true">*</span></label><div class="select-wrap"><select class="control" id="found" name="found" required><option value="">Selecciona una opción</option><option>Sí</option><option>Parcialmente</option><option>No</option></select></div></div>
+        </div>
+        <div class="actions"><button class="btn btn-primary" type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Guardar registro</button></div>
+      </form>
+      <p class="privacy-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3m-4 4v3"/></svg><span>Los registros se almacenan localmente en este navegador. No incluyas nombres ni datos que identifiquen a las personas observadas.</span></p>
+
+      <div class="records-head"><div><h3>Registros guardados</h3><p class="records-sub">Más recientes primero · Franja horaria calculada desde la hora de llegada</p></div><button class="btn btn-secondary" id="clearAll" type="button">Borrar todos los registros</button></div>
+      <div class="table-shell"><table aria-label="Tabla de observaciones registradas"><thead><tr><th>N.º</th><th>Fecha</th><th>Hora</th><th>Franja horaria</th><th>Permanencia (min)</th><th>Espera (min)</th><th>Motivo de visita</th><th>Ocupación al llegar</th><th>¿Encontró lo que buscaba?</th><th>Acción</th></tr></thead><tbody id="recordsBody"></tbody></table></div>
+    </section>
+
+    <section class="panel" id="panel-analysis" role="tabpanel" aria-labelledby="tab-analysis" hidden><div class="section-head"><span class="section-icon" aria-hidden="true">▤</span><div><h2>Análisis</h2><p>Resultados estadísticos de las observaciones.</p></div></div><div class="construction"><span class="construction-mark">✦</span><div><strong>En construcción</strong>Esta sección se habilitará en una etapa posterior del proyecto.</div></div></section>
+    <section class="panel" id="panel-probability" role="tabpanel" aria-labelledby="tab-probability" hidden><div class="section-head"><span class="section-icon" aria-hidden="true">%</span><div><h2>Probabilidad</h2><p>Explora eventos y relaciones entre variables.</p></div></div><div class="construction"><span class="construction-mark">✦</span><div><strong>En construcción</strong>Esta sección se habilitará en una etapa posterior del proyecto.</div></div></section>
+    <section class="panel" id="panel-report" role="tabpanel" aria-labelledby="tab-report" hidden><div class="section-head"><span class="section-icon" aria-hidden="true">▧</span><div><h2>Informe</h2><p>Consulta y presenta los hallazgos del estudio.</p></div></div><div class="construction"><span class="construction-mark">✦</span><div><strong>En construcción</strong>Esta sección se habilitará en una etapa posterior del proyecto.</div></div></section>
+    <footer class="footer">EstadíApp · Proyecto de Aula de Estadística · UNIPAZ</footer>
+  </main>
+  <div class="status" id="status" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      'use strict';
+      const STORAGE_KEY = 'estadiapp_grupo_2_1_biblioteca_v1';
+      const form = document.getElementById('recordForm');
+      const body = document.getElementById('recordsBody');
+      const count = document.getElementById('recordCount');
+      const countWord = document.getElementById('countWord');
+      const status = document.getElementById('status');
+      let records = loadRecords();
+      let statusTimer;
+
+      function localDateTime() {
+        const now = new Date();
+        const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+        return { date: local.toISOString().slice(0, 10), time: local.toISOString().slice(11, 16) };
+      }
+      function setCurrentDateTime() {
+        const now = localDateTime();
+        document.getElementById('date').value = now.date;
+        document.getElementById('time').value = now.time;
+      }
+      function loadRecords() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+          return Array.isArray(parsed) ? parsed.filter(item => item && typeof item === 'object') : [];
+        } catch (error) {
+          return [];
+        }
+      }
+      function persist() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+          return true;
+        } catch (error) {
+          showStatus('No se pudieron guardar los datos en este dispositivo. Revisa el espacio disponible del navegador.', true);
+          return false;
+        }
+      }
+      function showStatus(message, isError = false) {
+        status.textContent = message;
+        status.classList.toggle('error', isError);
+        status.classList.add('show');
+        window.clearTimeout(statusTimer);
+        statusTimer = window.setTimeout(() => status.classList.remove('show'), 3600);
+      }
+      function hourRange(time) {
+        const hour = Number(String(time).split(':')[0]);
+        if (!Number.isInteger(hour) || hour < 0 || hour > 23) return '—';
+        return `${String(hour).padStart(2, '0')}:00–${String(hour).padStart(2, '0')}:59`;
+      }
+      function formatDate(value) {
+        if (!value) return '—';
+        const [year, month, day] = value.split('-');
+        return year && month && day ? `${day}/${month}/${year}` : value;
+      }
+      function escapeHTML(value) {
+        return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+      }
+      function render() {
+        count.textContent = String(records.length);
+        countWord.textContent = records.length === 1 ? 'registro' : 'registros';
+        if (!records.length) {
+          body.innerHTML = '<tr><td colspan="10" class="empty-cell"><div class="empty"><strong>Aún no hay observaciones</strong>Completa el formulario para guardar el primer registro.</div></td></tr>';
+          return;
+        }
+        body.innerHTML = records.map((record, index) => {
+          const number = records.length - index;
+          return `<tr>
+            <td class="row-number">${number}</td><td>${escapeHTML(formatDate(record.date))}</td><td>${escapeHTML(record.time)}</td>
+            <td><span class="badge">${escapeHTML(hourRange(record.time))}</span></td>
+            <td>${escapeHTML(record.stay)}</td><td>${escapeHTML(record.wait)}</td>
+            <td>${escapeHTML(record.reason)}</td><td>${escapeHTML(record.occupancy)}</td><td>${escapeHTML(record.found)}</td>
+            <td><button class="btn btn-danger" type="button" data-delete="${escapeHTML(record.id)}" aria-label="Eliminar registro ${number}">Eliminar</button></td>
+          </tr>`;
+        }).join('');
+      }
+
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        const fields = ['date', 'time', 'stay', 'wait', 'reason', 'occupancy', 'found'];
+        let firstInvalid = null;
+        for (const name of fields) {
+          const input = form.elements.namedItem(name);
+          if (!input.value.trim() || !input.checkValidity()) {
+            firstInvalid = input;
+            break;
+          }
+        }
+        if (firstInvalid) {
+          firstInvalid.focus();
+          showStatus(firstInvalid.validity.rangeUnderflow ? 'Los tiempos no pueden ser negativos.' : 'Completa todos los campos correctamente antes de guardar.', true);
+          return;
+        }
+        const record = {
+          id: `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+          date: form.elements.date.value,
+          time: form.elements.time.value,
+          stay: Number(form.elements.stay.value),
+          wait: Number(form.elements.wait.value),
+          reason: form.elements.reason.value,
+          occupancy: form.elements.occupancy.value,
+          found: form.elements.found.value
+        };
+        records.unshift(record);
+        if (!persist()) { records.shift(); return; }
+        render();
+        form.reset();
+        setCurrentDateTime();
+        document.getElementById('stay').focus();
+        showStatus('Registro guardado correctamente.');
+      });
+
+      body.addEventListener('click', event => {
+        const button = event.target.closest('[data-delete]');
+        if (!button) return;
+        const target = records.findIndex(record => String(record.id) === button.dataset.delete);
+        if (target < 0) return;
+        if (!window.confirm('¿Quieres eliminar este registro? Esta acción no se puede deshacer.')) return;
+        const removed = records.splice(target, 1)[0];
+        if (!persist()) { records.splice(target, 0, removed); return; }
+        render();
+        showStatus('Registro eliminado.');
+      });
+
+      document.getElementById('clearAll').addEventListener('click', () => {
+        if (!records.length) { showStatus('No hay registros para borrar.'); return; }
+        if (!window.confirm(`¿Eliminar los ${records.length} registros guardados en este dispositivo? Esta acción no se puede deshacer.`)) return;
+        const previous = records;
+        records = [];
+        if (!persist()) { records = previous; return; }
+        render();
+        showStatus('Se eliminaron todos los registros.');
+      });
+
+      const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => activateTab(tab));
+        tab.addEventListener('keydown', event => {
+          let next = index;
+          if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+          else if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+          else if (event.key === 'Home') next = 0;
+          else if (event.key === 'End') next = tabs.length - 1;
+          else return;
+          event.preventDefault();
+          activateTab(tabs[next]);
+          tabs[next].focus();
+        });
+      });
+      function activateTab(tab) {
+        tabs.forEach(item => {
+          const selected = item === tab;
+          item.setAttribute('aria-selected', String(selected));
+          item.tabIndex = selected ? 0 : -1;
+          document.getElementById(item.getAttribute('aria-controls')).hidden = !selected;
+        });
+      }
+
+      setCurrentDateTime();
+      render();
+    })();
+  </script>
+</body>
+</html>
